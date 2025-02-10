@@ -1,4 +1,5 @@
 import { Workbook } from 'exceljs'
+import * as ts from "typescript";
 import {
   ACTION_TEMPLATE, COMMENT_TEMPLATE, TRACE,
   LOG_BRIGHT, LOG_RED, LOG_RESET,
@@ -179,10 +180,15 @@ export function replaceVars(input: string, vars: { [vid: string]: string }) {
 }
 
 export function locate(ctx: Page | FrameLocator, input: string): Locator {
+  //console.log(`Input ${input}`);
   let loc!: Locator
-  if (input.startsWith("!!!")) {
+  if (input.startsWith("@")) {
+    const code = `ctx.${input.substring(1)};`
+    //console.log("code  "+ code);
+    loc = eval(code)
+  } else if (input.startsWith("!!!")) {
     const parts = input.substring(3).split("|")
-    loc = ctx.getByText(parts[0] as any)
+    loc = ctx.getByText(parts[0] as any).first()
   } else if (input.startsWith("!!")) {
     const parts = input.substring(2).split("|")
     loc = ctx.getByPlaceholder(parts[0] as any)
@@ -191,6 +197,7 @@ export function locate(ctx: Page | FrameLocator, input: string): Locator {
     const role = parts[0] as any
     const name = parts[1]
     const exact = parts[2] === 'true'
+    //console.log("role---",parts[0], "name", name, "extact", exact)
     loc = ctx.getByRole(parts[0] as any, { name, exact })
   } else loc = ctx.locator(input)
   // console.log(input, " -- ", loc)
