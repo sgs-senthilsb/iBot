@@ -1,5 +1,5 @@
 import { Workbook } from 'exceljs'
-import * as ts from "typescript";
+
 import {
   ACTION_TEMPLATE, COMMENT_TEMPLATE, TRACE,
   LOG_BRIGHT, LOG_RED, LOG_RESET,
